@@ -47,13 +47,7 @@ int main(int argc, char* argv[]) {
 
     MPI_Barrier(MPI_COMM_WORLD);
     auto t0 = MPI_Wtime();
-	
-	if(rank == 0) {	
-		for (int i = 0; i < x.size(); i++) {
-            printf("%d ", x[i]);
-        }
-	}
-	
+
     isort(x, MPI_COMM_WORLD);
 
     MPI_Barrier(MPI_COMM_WORLD);
