@@ -13,7 +13,7 @@
 using namespace std;
 
 vector<short int> createLocalSample(std::vector<short int>& Xi, int p, int interval) {
-	vector<short int> localSample;
+	vector<short int> localSample(p);
 	for (int i = 0; (i < Xi.size()) && (i/interval <= p); i = i + interval) {
 		localSample.push_back(Xi[i]);
 	}
@@ -34,6 +34,23 @@ void isort(std::vector<short int>& Xi, MPI_Comm comm) {
 	sort(Xi.begin(), Xi.end());
 	
 	std::vector<short int> localSample = createLocalSample(Xi, size, Xi.size()/size);
+	
+	int localSize = localSample.size();
+    vector<int> gatheredVector;
+
+    if (rank == 0) {
+        gatheredVector.resize(localSize * size);
+    }
+    MPI_Gather(localSample.data(), localSize, MPI_INT,
+               gatheredVector.data(), localSize, MPI_INT,
+               0, comm);
+    if (rank == 0) {
+        std::cout << "Gathered Vector on Processor 0: ";
+        for (int val : gatheredVector) {
+            std::cout << val << ".";
+        }
+        std::cout << std::endl;
+    }
 	
 	for (const auto& num : localSample) {
 		oss2 << num << " ";
