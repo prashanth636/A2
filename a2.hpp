@@ -45,12 +45,13 @@ void isort(std::vector<short int>& Xi, MPI_Comm comm) {
                gatheredVector.data(), localSize, MPI_INT,
                0, comm);
     if (rank == 0) {
+		sort(gatheredVector.begin(), gatheredVector.end());
         std::cout << "Gathered Vector on Processor 0: ";
         for (int val : gatheredVector) {
             std::cout << val << ".";
         }
         std::cout << std::endl;
-    }
+	}
 	
 	for (const auto& num : localSample) {
 		oss2 << num << " ";
