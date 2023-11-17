@@ -41,16 +41,22 @@ void isort(std::vector<short int>& Xi, MPI_Comm comm) {
     if (rank == 0) {
         gatheredVector.resize(localSize * size);
     }
-    MPI_Gather(localSample.data(), localSize, MPI_INT,
-               gatheredVector.data(), localSize, MPI_INT,
+    MPI_Gather(localSample.data(), localSize, MPI_SHORT,
+               gatheredVector.data(), localSize, MPI_SHORT,
                0, comm);
     if (rank == 0) {
 		sort(gatheredVector.begin(), gatheredVector.end());
+		auto last = std::unique(gatheredVector.begin(), gatheredVector.end());
+		gatheredVector.erase(last, gatheredVector.end());
         std::cout << "Gathered Vector on Processor 0: ";
         for (int val : gatheredVector) {
             std::cout << val << ".";
         }
-		pivots = createLocalSample(gatheredVector, size, gatheredVector.size()/size);
+		if ( gatheredVector.size() >= size ) {
+			pivots = createLocalSample(gatheredVector, size, gatheredVector.size()/size);
+		} else {
+			pivots = gatheredVector;
+		}
 		std::cout << "._Pivot Vector on Processor 0: ";
         for (int val : pivots) {
             std::cout << val << "_";
@@ -62,7 +68,7 @@ void isort(std::vector<short int>& Xi, MPI_Comm comm) {
         }
         std::cout << std::endl;
 	}
-	MPI_Bcast(pivots.data(), pivots.size(), MPI_INT, 0, comm);
+	MPI_Bcast(pivots.data(), pivots.size(), MPI_SHORT, 0, comm);
 	
 	for (const auto& num : pivots) {
 		oss2 << num << " ";
