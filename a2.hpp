@@ -12,10 +12,10 @@
 #include <sstream>
 using namespace std;
 
-vector<short int> createLocalSample(std::vector<short int>& Xi, int p, int interval) {
+vector<short int> createLocalSample(std::vector<short int>& Xi, int p, int interval, bool pivot) {
 	vector<short int> localSample;
 	for (int i = 0; (i < Xi.size()) && (i/interval <= p); i = i + interval) {
-		localSample.push_back(Xi[i]);
+		if(!(pivot && i == 0)) localSample.push_back(Xi[i]);
 	}
 	return localSample;
 }
@@ -33,10 +33,10 @@ void isort(std::vector<short int>& Xi, MPI_Comm comm) {
 	std::string input = oss.str();
 	sort(Xi.begin(), Xi.end());
 	
-	std::vector<short int> localSample = createLocalSample(Xi, size, Xi.size()/size);
+	std::vector<short int> localSample = createLocalSample(Xi, size, Xi.size()/size, false);
 	
 	int localSize = localSample.size();
-    vector<short int> gatheredVector, pivots;
+    vector<short int> gatheredVector, pivots(size - 1);
 
     if (rank == 0) {
         gatheredVector.resize(localSize * size);
@@ -48,25 +48,11 @@ void isort(std::vector<short int>& Xi, MPI_Comm comm) {
 		sort(gatheredVector.begin(), gatheredVector.end());
 		auto last = std::unique(gatheredVector.begin(), gatheredVector.end());
 		gatheredVector.erase(last, gatheredVector.end());
-        std::cout << "Gathered Vector on Processor 0: ";
-        for (int val : gatheredVector) {
-            std::cout << val << ".";
-        }
-		if ( gatheredVector.size() >= size ) {
-			pivots = createLocalSample(gatheredVector, size, gatheredVector.size()/size);
+        if ( gatheredVector.size() >= size ) {
+			pivots = createLocalSample(gatheredVector, size, gatheredVector.size()/size, true);
 		} else {
 			pivots = gatheredVector;
 		}
-		std::cout << "._Pivot Vector on Processor 0: ";
-        for (int val : pivots) {
-            std::cout << val << "_";
-        }
-		pivots.erase(pivots.begin());
-		std::cout << "._Pivot Vector on Processor 0: ";
-        for (int val : pivots) {
-            std::cout << val << "_";
-        }
-        std::cout << std::endl;
 	}
 	MPI_Bcast(pivots.data(), pivots.size(), MPI_SHORT, 0, comm);
 	
