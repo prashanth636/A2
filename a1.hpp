@@ -11,24 +11,17 @@
 
 
 void filter_2d(long long int n, long long int m, const std::vector<float>& K, std::vector<float>& A) {
-	std::vector<float> R(n * m);
+	std::vector<float> R(std::vector<float>(n * m, 0.0));
 	
 	#pragma omp parallel
 	{
 		#pragma omp for 			//applying parallel for over the given number of rows
-		for (int i = 0; i < n; ++i) {
-			for (int j = 0; j < m; ++j) {
-				#pragma omp task			//creating fine-grained tasks on each element of the row
-				{
-					int x = i * m + j;
-					if ( i == 0 || j == 0 || i == n-1 || j == m-1) {
-						R[x] = A[x];		//copying the values in the borders
-					} else {
-						for (int ki = 0; ki < 3; ++ki) {
-							for (int kj = 0; kj < 3; ++kj) {
-								A[x] += A[x + (ki - 1)*m + kj] * K[ki * 3 + kj];  // multiplying the kernel elements with submatrix elements and accumulating.
-							}
-						}
+		for (int i = 1; i < n - 1; ++i) {
+			for (int j = 1; j < m - 1; ++j) {
+				int x = i * m + j;
+				for (int ki = -1; ki <= 1; ++ki) {
+					for (int kj = -1; kj <= 1; ++kj) {
+						A[x] += A[(i + ki) * m + (j + kj)] * K[(ki + 1) * 3 + (kj + 1)];  // multiplying the kernel elements with submatrix elements and accumulating.
 					}
 				}
 			}
