@@ -25,7 +25,7 @@
 #SBATCH --nodes=1
 
 ### how many cores to use on each node
-#SBATCH --ntasks-per-node=8
+#SBATCH --ntasks-per-node=16
 
 ### max time the job will run
 #SBATCH --time=00:08:00
@@ -37,4 +37,68 @@ hostname
 
 # in the similar way we run OMP app
 # tasket limits the number of cores we are going to use
-taskset -c 0-7 ./omp-test
+echo "------with 2 processing units-------"
+echo "n = 2000, m = 4000"
+taskset -c 0-1 ./a1 2000 4000
+echo "n = 4000, m = 4000"
+taskset -c 0-1 ./a1 4000 4000
+echo "n = 8000, m = 4000"
+taskset -c 0-1 ./a1 8000 4000
+echo "n = 12000, m = 4000"
+taskset -c 0-1 ./a1 12000 4000
+echo "n = 8000, m = 8000"
+taskset -c 0-1 ./a1 8000 8000
+echo "-------end of p = 2-----------------"
+
+echo "------with 4 processing units-------"
+echo "n = 2000, m = 4000"
+taskset -c 0-3 ./a1 2000 4000
+echo "n = 4000, m = 4000"
+taskset -c 0-3 ./a1 4000 4000
+echo "n = 8000, m = 4000"
+taskset -c 0-3 ./a1 8000 4000
+echo "n = 12000, m = 4000"
+taskset -c 0-3 ./a1 12000 4000
+echo "n = 8000, m = 8000"
+taskset -c 0-3 ./a1 8000 8000
+echo "-------end of p = 4-----------------"
+
+echo "------with 8 processing units-------"
+echo "n = 2000, m = 4000"
+taskset -c 0-7 ./a1 2000 4000
+echo "n = 4000, m = 4000"
+taskset -c 0-7 ./a1 4000 4000
+echo "n = 8000, m = 4000"
+taskset -c 0-7 ./a1 8000 4000
+echo "n = 12000, m = 4000"
+taskset -c 0-7 ./a1 12000 4000
+echo "n = 8000, m = 8000"
+taskset -c 0-7 ./a1 8000 8000
+echo "-------end of p = 8-----------------"
+
+echo "------with 12 processing units-------"
+echo "n = 2000, m = 4000"
+taskset -c 0-11 ./a1 2000 4000
+echo "n = 4000, m = 4000"
+taskset -c 0-11 ./a1 4000 4000
+echo "n = 8000, m = 4000"
+taskset -c 0-11 ./a1 8000 4000
+echo "n = 12000, m = 4000"
+taskset -c 0-11 ./a1 12000 4000
+echo "n = 8000, m = 8000"
+taskset -c 0-11 ./a1 8000 8000
+echo "-------end of p = 12-----------------"
+
+echo "------with 16 processing units-------"
+echo "n = 2000, m = 4000"
+taskset -c 0-15 ./a1 2000 4000
+echo "n = 4000, m = 4000"
+taskset -c 0-15 ./a1 4000 4000
+echo "n = 8000, m = 4000"
+taskset -c 0-15 ./a1 8000 4000
+echo "n = 12000, m = 4000"
+taskset -c 0-15 ./a1 12000 4000
+echo "n = 8000, m = 8000"
+taskset -c 0-15 ./a1 8000 8000
+echo "-------end of p = 16-----------------"
+
