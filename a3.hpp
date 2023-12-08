@@ -24,7 +24,8 @@ void gaussian_kde(int n, float h, const std::vector<float>& x, std::vector<float
     // Copy data from host to device
     cudaMemcpy(X_d, x.data(), n * sizeof(float), cudaMemcpyHostToDevice);
     
-    Gaussian_kernel_density_estimate<<<(n + BLOCK_SIZE - 1) / BLOCK_SIZE, BLOCK_SIZE>>>(X_d, Y_d, n, h);
+    int num_blocks = (n + BLOCK_SIZE - 1) / BLOCK_SIZE;
+    Gaussian_kernel_density_estimate<<<num_blocks, BLOCK_SIZE>>>(X_d, Y_d, n, h);
 
     // Copy data from device to host
     cudaMemcpy(y.data(), Y_d, n * sizeof(float), cudaMemcpyDeviceToHost);
