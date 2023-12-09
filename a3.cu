@@ -6,7 +6,7 @@
 
 #define BLOCK_SIZE 256
 
-__global__ void Gaussian_kernel_density_estimate(float* X, float* Y, int N, float h) {
+extern "C" __global__ void Gaussian_kernel_density_estimate(float* X, float* Y, int N, float h) {
     int index = blockIdx.x * blockDim.x + threadIdx.x;
     if (index < N) {
         float sum = 0.0f;

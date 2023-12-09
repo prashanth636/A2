@@ -15,6 +15,8 @@
 
 #define BLOCK_SIZE 256
 
+extern "C" void Gaussian_kernel_density_estimate(float* X, float* Y, int N, float h);
+
 void gaussian_kde(int n, float h, const std::vector<float>& x, std::vector<float>& y) {
     float* X_d, * Y_d;
 
