@@ -4,6 +4,7 @@
  */
 
 #ifndef A3_HPP
+#ifndef A3_HPP
 #define A3_HPP
 
 #include <cstdio>
@@ -15,25 +16,10 @@
 
 #define BLOCK_SIZE 256
 
-extern "C" void Gaussian_kernel_density_estimate(float* X, float* Y, int N, float h);
+//extern "C" void Gaussian_kernel_density_estimate(float* X, float* Y, int N, float h);
 
 void gaussian_kde(int n, float h, const std::vector<float>& x, std::vector<float>& y) {
-    float* X_d, * Y_d;
-
-    cudaMalloc(&X_d, n * sizeof(float));
-    cudaMalloc(&Y_d, n * sizeof(float));
-
-    // Copy data from host to device
-    cudaMemcpy(X_d, x.data(), n * sizeof(float), cudaMemcpyHostToDevice);
-    
-    int num_blocks = (n + BLOCK_SIZE - 1) / BLOCK_SIZE;
-    Gaussian_kernel_density_estimate<<<num_blocks, BLOCK_SIZE>>>(X_d, Y_d, n, h);
-
-    // Copy data from device to host
-    cudaMemcpy(y.data(), Y_d, n * sizeof(float), cudaMemcpyDeviceToHost);
-
-    cudaFree(X_d);
-    cudaFree(Y_d);
+    wrapper(n, h, x,)
 } // gaussian_kde
 
 #endif // A3_HPP

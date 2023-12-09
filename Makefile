@@ -1,5 +1,5 @@
 CXX=nvcc
-CXXFLAGS=-std=c++11
+CXXFLAGS=-std=c++11 -o3
 
 all: a3
 
